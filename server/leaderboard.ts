@@ -1,23 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-
-// Response type for adding a player to the leaderboard
-export type AddPlayerLeaderboardResponse = {
-  success: boolean; // Indicates whether the operation was successful
-};
-
-// Type for a single entry in the leaderboard
-export type LeaderboardEntry = {
-  id: number;
-  playerName: string;
-  score: number;
-  date: Date;
-};
-
-// Response type for retrieving the leaderboard
-export type GetLeaderboardResponse = {
-  success: boolean; // Indicates whether the operation was successful
-  leaderboard: LeaderboardEntry[]; // Array of leaderboard entries
-};
+import {
+  AddPlayerLeaderboardResponse,
+  GetLeaderboardResponse,
+} from "./models/typeLeaderboard";
 
 // Class representing the leaderboard
 export class Leaderboard {
@@ -34,9 +19,13 @@ export class Leaderboard {
     score: number,
     date: Date,
   ): Promise<AddPlayerLeaderboardResponse> {
-    try {
-      if (playerName && score && date) {
-        // Insert the new player into the database
+    if (!(playerName && score && date)) {
+      return {
+        success: false, // If any of the required data is missing, return failure response
+      };
+    } else {
+      // Insert the new player into the database
+      try {
         await this.prisma.leaderboard.create({
           data: {
             playerName: playerName,
@@ -45,16 +34,12 @@ export class Leaderboard {
           },
         });
         return { success: true }; // Return success response
-      } else {
+      } catch (error) {
+        console.error("Database connection error", error);
         return {
-          success: false, // If any of the required data is missing, return failure response
+          success: false, // Return failure response on error
         };
       }
-    } catch (error) {
-      console.error("Database connection error", error);
-      return {
-        success: false, // Return failure response on error
-      };
     }
   }
 
