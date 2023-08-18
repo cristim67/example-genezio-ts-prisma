@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Container, Row, Col, Input } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 // Define the structure of a Category
-interface Category {
+type Category = {
   id: string;
   name: string;
-}
+};
 
 // Define the component for the Home page
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>(""); // Selected difficulty level
   const [categories, setCategories] = useState<Category[]>([]); // Available categories
   const [error, setError] = useState<string>(""); // Form submission error
+  const navigate = useNavigate();
 
   // Fetch categories from API on component mount
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function Home() {
     localStorage.setItem("selectedDifficulty", selectedDifficulty);
 
     // Redirect to questions page
-    window.location.replace("/questions");
+    navigate("/questions");
 
     setError(""); // Clear error message
   };

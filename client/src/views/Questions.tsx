@@ -12,19 +12,19 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 // Define the structure of a Question
-interface Question {
+type Question = {
   question: string;
   correct_answer: string;
   incorrect_answers: string[];
-}
+};
 
 // Define the structure of a Leaderboard entry
-interface LeaderboardInterface {
+type LeaderboardInterface = {
   id: number;
   playerName: string;
   score: number;
   date: Date;
-}
+};
 
 // Enum to represent the game status
 enum GameStatus {
