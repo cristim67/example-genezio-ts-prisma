@@ -45,19 +45,20 @@
 }
 
 .answer-option {
-    background-color: #3867e3;
+    background-color: #D1ECF1;
     padding: 10px;
     margin: 5px 0;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .answer-option:hover {
-    background-color: #0e31a8;
+    background-color: #93e7ef;
 }
 
 .answer-option.selected {
-    background-color: #7a1cb4;
+    background-color: #47d4fa;
     color: #fafafa;
 }
 
