@@ -17,52 +17,55 @@ export class Leaderboard {
   async addPlayerLeaderboard(
     playerName: string,
     score: number,
-    date: Date,
   ): Promise<AddPlayerLeaderboardResponse> {
-    if (!(playerName && score && date)) {
-      return {
-        success: false, // If any of the required data is missing, return failure response
-      };
-    } else {
+    return new Promise(async (resolve) => {
+      if (!playerName && !(score === 0 || score)) {
+        resolve({ success: false });
+        return;
+      }
       // Insert the new player into the database
-      try {
-        await this.prisma.leaderboard.create({
+      await this.prisma.leaderboard
+        .create({
           data: {
             playerName: playerName,
             score: score,
-            date: date,
+            date: new Date(),
           },
+        })
+        .catch((error: any) => {
+          console.error("Database connection error", error);
+          resolve({ success: false });
+          return;
         });
-        return { success: true }; // Return success response
-      } catch (error) {
-        console.error("Database connection error", error);
-        return {
-          success: false, // Return failure response on error
-        };
-      }
-    }
+      resolve({ success: true });
+      return;
+    });
   }
 
   // Method for retrieving the leaderboard
   async getLeaderboard(): Promise<GetLeaderboardResponse> {
-    try {
+    return new Promise<GetLeaderboardResponse>(async (resolve) => {
       // Fetch leaderboard data from the database
-      const leaderboard = await this.prisma.leaderboard.findMany();
+      const leaderboard = await this.prisma.leaderboard
+        .findMany()
+        .catch((error: any) => {
+          console.error("Leaderboard get error", error);
+          resolve({ success: false, leaderboard: [] });
+          return;
+        });
+      if (leaderboard) {
+        // Sort leaderboard entries based on score and date
+        leaderboard.sort((first, second) => {
+          // Sort by score in descending order
+          if (second.score !== first.score) {
+            return second.score - first.score;
+          }
 
-      // Sort leaderboard entries based on score and date
-      leaderboard.sort((first, second) => {
-        // Sort by score in descending order
-        if (second.score !== first.score) {
-          return second.score - first.score;
-        }
-
-        // If scores are equal, sort by date in descending order
-        return new Date(second.date).getTime() - new Date(first.date).getTime();
-      });
-
-      return { success: true, leaderboard: leaderboard }; // Return success response with leaderboard data
-    } catch (error) {
-      return { success: false, leaderboard: [] }; // Return failure response if an error occurs
-    }
+          // If scores are equal, sort by date in descending order
+          return second.date.getTime() - first.date.getTime();
+        });
+        resolve({ success: true, leaderboard: leaderboard }); // Resolve with success response and leaderboard data
+      }
+    });
   }
 }
