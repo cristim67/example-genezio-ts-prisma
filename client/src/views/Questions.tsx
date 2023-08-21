@@ -113,6 +113,7 @@ export default function Questions() {
 
     if (currentQuestionIndex >= questions.length - 1) {
       const status = await Leaderboard.addPlayerLeaderboard(playerName, score);
+      console.log(status);
       if (status.success) {
         setGameStatus(GameStatus.Finished);
       }

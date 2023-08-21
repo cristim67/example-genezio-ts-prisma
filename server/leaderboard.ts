@@ -19,9 +19,8 @@ export class Leaderboard {
     score: number,
   ): Promise<AddPlayerLeaderboardResponse> {
     return new Promise(async (resolve) => {
-      if (!playerName && !(score === 0 || score)) {
-        resolve({ success: false });
-        return;
+      if (!playerName && !(score === 0 || score !== null)) {
+        return resolve({ success: false });
       }
       // Insert the new player into the database
       await this.prisma.leaderboard
@@ -34,11 +33,9 @@ export class Leaderboard {
         })
         .catch((error: any) => {
           console.error("Database connection error", error);
-          resolve({ success: false });
-          return;
+          return resolve({ success: false });
         });
-      resolve({ success: true });
-      return;
+      return resolve({ success: true });
     });
   }
 
@@ -50,21 +47,23 @@ export class Leaderboard {
         .findMany()
         .catch((error: any) => {
           console.error("Leaderboard get error", error);
-          resolve({ success: false, leaderboard: [] });
-          return;
+          return resolve({ success: false, leaderboard: [] });
         });
-      if (leaderboard) {
+      // If is data in leaderboard
+      if (!leaderboard) {
+        return resolve({ success: false, leaderboard: [] });
+      } else {
         // Sort leaderboard entries based on score and date
         leaderboard.sort((first, second) => {
           // Sort by score in descending order
           if (second.score !== first.score) {
             return second.score - first.score;
           }
-
           // If scores are equal, sort by date in descending order
           return second.date.getTime() - first.date.getTime();
         });
-        resolve({ success: true, leaderboard: leaderboard }); // Resolve with success response and leaderboard data
+        // Resolve with success response and leaderboard data
+        return resolve({ success: true, leaderboard: leaderboard });
       }
     });
   }
