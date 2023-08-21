@@ -122,7 +122,11 @@ export default function Questions() {
 
   // Display loading message while fetching questions
   if (gameStatus === GameStatus.Loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+      </div>
+    );
   }
 
   // Display game results or leaderboard
@@ -151,7 +155,7 @@ export default function Questions() {
                 <p className="mt-3 text-center">Final Score: {score}</p>
                 <hr />
                 <div>
-                  <p className="text-center">Ranking</p>
+                  <p className="text-center">Leaderboard</p>
                   <div className="leaderboard">{leaderboardItems}</div>
                 </div>
               </Card>
