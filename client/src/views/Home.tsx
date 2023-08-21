@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Container, Row, Col, Input } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-
-// Define the structure of a Category
-type Category = {
-  id: string;
-  name: string;
-};
+import {Category} from "../models/typeHome";
 
 // Define the component for the Home page
 export default function Home() {
