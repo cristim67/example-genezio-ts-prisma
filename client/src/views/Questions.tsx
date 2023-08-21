@@ -78,16 +78,23 @@ export default function Questions() {
 
   // Fetch leaderboard data when game finishes
   useEffect(() => {
-    if (gameStatus === GameStatus.Finished && !leaderboardLoaded) {
-      Leaderboard.getLeaderboard()
-        .then((data) => {
-          setLeaderboard(data.leaderboard);
-          setLeaderboardLoaded(true);
-        })
-        .catch((error) => {
+    const fetchLeaderboardData = async () => {
+      if (gameStatus === GameStatus.Finished && !leaderboardLoaded) {
+        try {
+          const data = await Leaderboard.getLeaderboard();
+          if (data.success) {
+            setLeaderboard(data.leaderboard);
+            setLeaderboardLoaded(true);
+          } else {
+            console.error("Error fetching leaderboard");
+          }
+        } catch (error) {
           console.error("Error fetching leaderboard:", error);
-        });
-    }
+        }
+      }
+    };
+
+    fetchLeaderboardData();
   }, [gameStatus, leaderboardLoaded]);
 
   // Handle user's answer selection
@@ -96,7 +103,7 @@ export default function Questions() {
   };
 
   // Handle moving to the next question or finishing the game
-  const handleNextQuestion = (): void => {
+  const handleNextQuestion = async () => {
     if (userAnswer === questions[currentQuestionIndex].correct_answer) {
       setScore((prevScore) => prevScore + 1);
     }
@@ -104,17 +111,11 @@ export default function Questions() {
     setUserAnswer(null);
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
 
-    // Handle game completion
     if (currentQuestionIndex >= questions.length - 1) {
-      Leaderboard.addPlayerLeaderboard(playerName, score, new Date())
-        .then((status) => {
-          if (status) {
-            setGameStatus(GameStatus.Finished);
-          }
-        })
-        .catch((error) => {
-          console.error("Error updating leaderboard:", error);
-        });
+      const status = await Leaderboard.addPlayerLeaderboard(playerName, score);
+      if (status.success) {
+        setGameStatus(GameStatus.Finished);
+      }
     }
   };
 
@@ -128,7 +129,7 @@ export default function Questions() {
     gameStatus === GameStatus.Finished ||
     currentQuestionIndex >= questions.length
   ) {
-    let resultComponent: JSX.Element | null = null;
+    let resultComponent: JSX.Element | null;
 
     if (gameStatus === GameStatus.Finished && leaderboard) {
       const leaderboardItems = leaderboard.map((item) => (
