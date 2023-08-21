@@ -1,37 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Container, Row, Col } from "reactstrap";
 import { Leaderboard } from "../sdk/leaderboard.sdk";
-
-// Function to shuffle an array
-function shuffleArray<T>(array: T[]): T[] {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-// Define the structure of a Question
-type Question = {
-  question: string;
-  correct_answer: string;
-  incorrect_answers: string[];
-};
-
-// Define the structure of a Leaderboard entry
-type LeaderboardInterface = {
-  id: number;
-  playerName: string;
-  score: number;
-  date: Date;
-};
-
-// Enum to represent the game status
-enum GameStatus {
-  Loading,
-  InProgress,
-  Finished,
-}
+import { shuffleArray } from "../utils/utils";
+import {
+  Question,
+  GameStatus,
+  LeaderboardInterface,
+} from "../models/typeQuestions";
 
 // Component for the Questions page
 export default function Questions() {
