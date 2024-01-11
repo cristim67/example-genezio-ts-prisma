@@ -1,4 +1,4 @@
-# Quiz App example [![deployed with: genezio](https://img.shields.io/badge/deployed_with-genezio-6742c1.svg?labelColor=62C353&style=flat)](https://github.com/genez-io/genezio)
+# Quiz App example  [![deployed with: genezio](https://img.shields.io/badge/deployed_with-genezio-6742c1.svg?labelColor=62C353&style=flat)](https://github.com/genez-io/genezio)
 
 This is an example of a quiz application with quest users that maintains a leaderboard. This uses React for the frontend application and Genezio for deploying and developing the backend.
 
